@@ -1,7 +1,6 @@
 object Form1: TForm1
   Left = 0
   Top = 0
-  Align = alLeft
   Caption = 'Form1'
   ClientHeight = 582
   ClientWidth = 857
@@ -16,27 +15,31 @@ object Form1: TForm1
   PixelsPerInch = 96
   TextHeight = 13
   object Splitter1: TSplitter
-    Left = 289
+    Left = 378
     Top = 0
     Width = 8
     Height = 582
+    ExplicitLeft = 289
   end
   object PageControl1: TPageControl
     Left = 0
     Top = 0
-    Width = 289
+    Width = 378
     Height = 582
-    ActivePage = TabSheet1
+    ActivePage = TabSheet2
     Align = alLeft
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Queues'
+      OnContextPopup = TabSheet1ContextPopup
+      ExplicitWidth = 281
       ExplicitHeight = 165
       object lblResult: TLabel
         Left = 32
         Top = 96
-        Width = 73
-        Height = 25
+        Width = 321
+        Height = 153
+        AutoSize = False
         Caption = 'Results:'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -44,33 +47,64 @@ object Form1: TForm1
         Font.Name = 'Tahoma'
         Font.Style = []
         ParentFont = False
+        WordWrap = True
+        OnClick = lblResultClick
       end
-      object Button1: TButton
+      object btnQueues: TButton
         Left = 16
         Top = 24
         Width = 233
         Height = 49
         Caption = 'Test Primes using  Queues'
         TabOrder = 0
-        OnClick = Button1Click
+        OnClick = btnQueuesClick
       end
     end
     object TabSheet2: TTabSheet
       Caption = 'Commands'
       ImageIndex = 1
+      ExplicitWidth = 281
       ExplicitHeight = 165
+      object lblResult2: TLabel
+        Left = 32
+        Top = 96
+        Width = 321
+        Height = 153
+        AutoSize = False
+        Caption = 'Results:'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -21
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+        WordWrap = True
+        OnClick = lblResultClick
+      end
+      object btnCommands: TButton
+        Left = 16
+        Top = 24
+        Width = 233
+        Height = 49
+        Caption = 'Test Primes using Commands'
+        TabOrder = 0
+        OnClick = btnCommandsClick
+      end
     end
   end
   object panFrameHost: TPanel
-    Left = 297
+    Left = 386
     Top = 0
-    Width = 560
+    Width = 471
     Height = 582
     Align = alClient
     TabOrder = 1
-    ExplicitLeft = 344
-    ExplicitTop = 288
-    ExplicitWidth = 185
-    ExplicitHeight = 41
+    ExplicitLeft = 295
+    ExplicitWidth = 560
+  end
+  object tmCheckCommand: TTimer
+    OnTimer = tmCheckCommandTimer
+    Left = 200
+    Top = 368
   end
 end

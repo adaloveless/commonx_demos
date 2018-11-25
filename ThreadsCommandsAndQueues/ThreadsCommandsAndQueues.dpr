@@ -1,6 +1,8 @@
 program ThreadsCommandsAndQueues;
 
 uses
+  bigbrainultra,
+  brainwashultra,
   Vcl.Forms,
   uMain in 'uMain.pas' {Form1},
   FrameTotalDebug in '..\commonx\FrameTotalDebug.pas' {framTotalDebug: TFrame};
