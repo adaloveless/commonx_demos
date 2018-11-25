@@ -1,0 +1,3 @@
+[submodule "commonx"]
+	path = commonx
+	url = https://github.com/adaloveless/commonx
