@@ -56,7 +56,7 @@ type
   end;
 
 
-function CheckIsPrime(n: int64): boolean;
+function CheckIsPrime(n: int64; p: PProgress): boolean;
 
 var
   Form1: TForm1;
@@ -245,19 +245,27 @@ end;
 procedure TQueueItem_IsPrime.DoExecute;
 begin
   inherited;
-  out_IsPrime := CheckIsPrime(in_n);
+  out_IsPrime := CheckIsPrime(in_n, nil);
 end;
 
 { Tcmd_CreatePrimeTestsUsingQueues }
 
-function CheckIsPrime(n: int64): boolean;
+function CheckIsPrime(n: int64; p: PProgress): boolean;
 var
   x: ni;
+  cx: ni;
 begin
   result := true;
-  for x := 2 to (n div 2) do begin
+  cx := (n div 2);
+  if assigned(p) then
+    p.stepcount := cx;
+  for x := 2 to cx do begin
+    if (x and 1) = 0 then continue; //multiples of even numbers are also even, so skip anything without the low bit set
     //if no remainder from modulus operation
+    if assigned(p) then
+      p.step := x;
     if (n mod x) = 0 then begin
+
       //this is not prime
       result:= false;
       break;
@@ -271,7 +279,7 @@ end;
 procedure TCommand_IsPrime.DoExecute;
 begin
   inherited;
-  out_IsPrime := CheckIsPrime(in_n);
+  out_IsPrime := CheckIsPrime(in_n, @self.progress);
 end;
 
 end.
