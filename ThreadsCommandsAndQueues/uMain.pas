@@ -6,6 +6,10 @@ uses
   stringx, tickcount, systemx,typex, Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ComCtrls, FrameTotalDebug, simplequeue, commandprocessor, anoncommand, globalmultiqueue, better_collections, linked_list;
 
+const
+  MIN_PRIME = 1000000000;
+  MAX_PRIME = 1000001000;
+
 type
   TQueueItem_IsPrime = class(TQueueItem)
   protected
@@ -66,9 +70,6 @@ var
   ac: TAnonymousCommand<ni>;
   res: ni;
   tmStart,tmEnd: ticker;
-const
-  MIN_PRIME = 1000000000;
-  MAX_PRIME = 1000010000;
 begin
   //
   res := 0;
@@ -132,9 +133,6 @@ var
   ac: TAnonymousCommand<ni>;
   res: ni;
   tmStart,tmEnd: ticker;
-const
-  MIN_PRIME = 1000000000;
-  MAX_PRIME = 1000010000;
 begin
   //
   res := 0;
