@@ -4,7 +4,8 @@ interface
 
 uses
   stringx, tickcount, systemx,typex, Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ComCtrls, FrameTotalDebug, simplequeue, commandprocessor, anoncommand, globalmultiqueue, better_collections, linked_list;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ComCtrls, FrameTotalDebug, simplequeue, commandprocessor, anoncommand, globalmultiqueue, better_collections, linked_list,
+  Vcl.Imaging.jpeg, fastbitmap, easyimage;
 
 const
   MIN_PRIME = 1000000000;
@@ -39,6 +40,8 @@ type
     tmCheckCommand: TTimer;
     lblResult2: TLabel;
     btnCommands: TButton;
+    Image1: TImage;
+    Button1: TButton;
     procedure FormCreate(Sender: TObject);
     procedure btnQueuesClick(Sender: TObject);
     procedure lblResultClick(Sender: TObject);
@@ -46,6 +49,7 @@ type
     procedure TabSheet1ContextPopup(Sender: TObject; MousePos: TPoint;
       var Handled: Boolean);
     procedure btnCommandsClick(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
   private
     activecmd: TCommand;
     { Private declarations }
@@ -123,6 +127,51 @@ begin
   ac.start;
   activecmd := ac;
 
+
+
+
+end;
+
+procedure TForm1.Button1Click(Sender: TObject);
+var
+  fbm: TFastBitmap;
+  outfbm: TFastBitmap;
+  jpg: TJPEGImage;
+  bitmap: TBitmap;
+begin
+  //make a fast bitmap from the image component
+  fbm := TFastBitmap.create;
+//  fbm.FromPNG(image1.picture.bit);
+  bitmap := jpegToBitmap(image1.picture.graphic as TJpegImage, true);
+  try
+    fbm.FromBitmap(bitmap);
+  finally
+    bitmap.free;
+  end;
+
+  //make an output fast bitmap
+  outfbm := TFastBitmap.create;
+  outfbm.Allocate(fbm.Width, fbm.Height);
+  outfbm.New;
+  self.activecmd := outfbm.IterateExternalSource_begin(fbm,
+            procedure (source: TFastBitmap; dest: TFastBitmap; region: TRect; prog: PProgress)
+            var
+              x,y: ni;
+            begin
+              if prog <> nil then prog.stepcount := region.bottom-region.Top;
+              for y := region.top to region.Bottom do begin
+                if prog <> nil then prog.step := y-region.top;
+                for x := region.Left to region.right do begin
+                  dest.Canvas.Pixels[x,y] := source.Canvas.getaveragepixel(x,y,16,16);
+                end;
+              end;
+            end
+            ,
+            procedure ()
+            begin
+//              outFbm.AssignToPicture(image1.picture);
+            end
+  );
 
 
 
@@ -227,6 +276,10 @@ procedure TForm1.tmCheckCommandTimer(Sender: TObject);
 begin
   UpdateState;
   if activecmd <> nil then begin
+    if activecmd is Tcmd_FastBitmapIterate then begin
+      Tcmd_FastBitmapIterate(activecmd).dest.AssignToPicture(image1.picture);
+    end;
+
     if activecmd.IsComplete then begin
       activecmd.waitfor;
       activecmd.free;
