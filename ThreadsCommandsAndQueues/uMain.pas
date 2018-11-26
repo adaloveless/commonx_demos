@@ -57,6 +57,7 @@ type
     { Public declarations }
     procedure RefreshProcInfo;
     procedure UpdateState;
+    procedure TileNotify(src, dest: TFastBitmap; region: TRect; state: TTileState);
   end;
 
 
@@ -147,6 +148,9 @@ begin
     bitmap := jpegToBitmap(image1.picture.graphic as TJpegImage, true);
     try
       fbm.FromBitmap(bitmap);
+      image1.picture.assign(bitmap);
+//      bitmap.assign(image1.picture);
+//      fbm.AssignToPicture(image1.picture);
     finally
       bitmap.free;
     end;
@@ -173,10 +177,7 @@ begin
               end;
             end
             ,
-            procedure ()
-            begin
-//              outFbm.AssignToPicture(image1.picture);
-            end
+            TileNotify
   );
 
 
@@ -278,13 +279,33 @@ begin
   btnQueues.enabled := activecmd = nil;
 end;
 
+procedure TForm1.TileNotify(src, dest: TFastBitmap; region: TRect;
+  state: TTileState);
+var
+  tile: TFastBitmap;
+  bm: TBitmap;
+begin
+  //
+  if state = tsFinished then begin
+    tile := TFastBitmap.create;
+    tile.FromFAstBitmapRect(dest, region);
+    bm := tile.tobitmap;
+    image1.picture.Bitmap.Canvas.Draw(region.left, region.top, bm);
+    //image1.picture.bitmap.canvas.Rectangle(region);
+    bm.free;
+    tile.free;
+  end;
+
+
+end;
+
 procedure TForm1.tmCheckCommandTimer(Sender: TObject);
 begin
   UpdateState;
   if activecmd <> nil then begin
-    if activecmd is Tcmd_FastBitmapIterate then begin
-      Tcmd_FastBitmapIterate(activecmd).dest.AssignToPicture(image1.picture);
-    end;
+//    if activecmd is Tcmd_FastBitmapIterate then begin
+//      Tcmd_FastBitmapIterate(activecmd).dest.AssignToPicture(image1.picture);
+//    end;
 
     if activecmd.IsComplete then begin
       activecmd.waitfor;
@@ -301,7 +322,9 @@ end;
 
 procedure TForm1.UpdateState;
 begin
-
+  Button1.Enabled := activecmd = nil;
+  btnQueues.enabled := button1.enabled;
+  btnCommands.enabled := button1.enabled;
 end;
 
 { TQueueItem_IsPrime }

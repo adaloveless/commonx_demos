@@ -5,6 +5,7 @@ object Form1: TForm1
   ClientHeight = 557
   ClientWidth = 1058
   Color = clBtnFace
+  DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
@@ -30176,7 +30177,7 @@ object Form1: TForm1
         Stretch = True
       end
       object btnCommands: TButton
-        Left = 0
+        Left = 3
         Top = 0
         Width = 161
         Height = 41
@@ -30185,7 +30186,7 @@ object Form1: TForm1
         OnClick = btnCommandsClick
       end
       object Button1: TButton
-        Left = 0
+        Left = 3
         Top = 47
         Width = 161
         Height = 48
