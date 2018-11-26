@@ -54,6 +54,7 @@ type
     activecmd: TCommand;
     { Private declarations }
   public
+    tmStart: ticker;
     { Public declarations }
     procedure RefreshProcInfo;
     procedure UpdateState;
@@ -140,17 +141,16 @@ var
   jpg: TJPEGImage;
   bitmap: TBitmap;
 begin
+  tmStart := getTicker;
   //make a fast bitmap from the image component
   fbm := TFastBitmap.create;
-//  fbm.FromPNG(image1.picture.bit);
+
   Debug.Log(image1.picture.graphic.ClassName);
   if image1.picture.graphic is TJPEGImage then begin
     bitmap := jpegToBitmap(image1.picture.graphic as TJpegImage, true);
     try
       fbm.FromBitmap(bitmap);
       image1.picture.assign(bitmap);
-//      bitmap.assign(image1.picture);
-//      fbm.AssignToPicture(image1.picture);
     finally
       bitmap.free;
     end;
@@ -225,6 +225,12 @@ begin
               );
 
             end;
+
+            //this is a hack.  We can't wait on BGCmd because it is the
+            //commandprocessor for this anonymous command (it will never complete).
+            //typically I would create another command processor and use it instead
+            //but I'm feeling lazy.   Also not that WaitForall isn't a valid
+            //solution if any commands are FireForget.
             while BGCmd.commandcount > 1 do
               sleep(1000);
 //            BGCmd.WaitForAll(self);
@@ -321,6 +327,7 @@ begin
 
       if activecmd is Tcmd_FastBitmapIterate then begin
 //        Tcmd_FastBitmapIterate(activecmd).dest.AssignToPicture(image1.picture);
+        lblResult2.Caption := 'Completed in '+floatprecision(gettimesince(tmstart)/1000,3)+' seconds.';
       end;
 
       activecmd.free;
