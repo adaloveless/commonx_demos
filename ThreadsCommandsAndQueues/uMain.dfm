@@ -28,7 +28,7 @@ object Form1: TForm1
     Top = 0
     Width = 665
     Height = 557
-    ActivePage = TabSheet2
+    ActivePage = TabSheet1
     Align = alLeft
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -30177,7 +30177,7 @@ object Form1: TForm1
         Stretch = True
       end
       object btnCommands: TButton
-        Left = 3
+        Left = 0
         Top = 0
         Width = 161
         Height = 41
