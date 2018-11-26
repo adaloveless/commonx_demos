@@ -288,6 +288,11 @@ begin
 
     if activecmd.IsComplete then begin
       activecmd.waitfor;
+
+      if activecmd is Tcmd_FastBitmapIterate then begin
+        Tcmd_FastBitmapIterate(activecmd).dest.AssignToPicture(image1.picture);
+      end;
+
       activecmd.free;
       activecmd := nil;
     end;
