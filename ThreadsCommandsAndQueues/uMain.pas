@@ -154,8 +154,11 @@ begin
     finally
       bitmap.free;
     end;
-  end else begin
+  end else
+  if image1.picture.graphic is TPNGImage then begin
     fbm.FromPNG(image1.picture.graphic as TPNGImage);
+  end else begin
+    fbm.FromBitmap(image1.picture.graphic as TBitmap);
   end;
 
 
@@ -291,11 +294,17 @@ begin
     tile.FromFAstBitmapRect(dest, region);
     bm := tile.tobitmap;
     image1.picture.Bitmap.Canvas.Draw(region.left, region.top, bm);
-    //image1.picture.bitmap.canvas.Rectangle(region);
+
     bm.free;
     tile.free;
+  end
+  else if state = tsStarted then begin
+    image1.Picture.bitmap.canvas.Pen.Color := clWhite;
+    image1.Picture.bitmap.canvas.Pen.Mode := TPenMode.pmXor;
+    region.Right := region.right + 1;
+    region.Bottom := region.bottom + 1;
+    image1.picture.bitmap.canvas.Rectangle(region);
   end;
-
 
 end;
 
@@ -311,7 +320,7 @@ begin
       activecmd.waitfor;
 
       if activecmd is Tcmd_FastBitmapIterate then begin
-        Tcmd_FastBitmapIterate(activecmd).dest.AssignToPicture(image1.picture);
+//        Tcmd_FastBitmapIterate(activecmd).dest.AssignToPicture(image1.picture);
       end;
 
       activecmd.free;
