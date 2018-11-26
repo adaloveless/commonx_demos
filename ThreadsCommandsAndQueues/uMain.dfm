@@ -30,11 +30,9 @@ object Form1: TForm1
     ActivePage = TabSheet2
     Align = alLeft
     TabOrder = 0
-    ExplicitHeight = 635
     object TabSheet1: TTabSheet
       Caption = 'Queues'
       OnContextPopup = TabSheet1ContextPopup
-      ExplicitHeight = 607
       object lblResult: TLabel
         Left = 192
         Top = 24
@@ -64,7 +62,6 @@ object Form1: TForm1
     object TabSheet2: TTabSheet
       Caption = 'Commands'
       ImageIndex = 1
-      ExplicitHeight = 607
       DesignSize = (
         657
         529)
@@ -30205,10 +30202,9 @@ object Form1: TForm1
     Height = 557
     Align = alClient
     TabOrder = 1
-    ExplicitWidth = 326
-    ExplicitHeight = 635
   end
   object tmCheckCommand: TTimer
+    Interval = 100
     OnTimer = tmCheckCommandTimer
     Left = 200
     Top = 368

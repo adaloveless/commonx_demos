@@ -5,7 +5,7 @@ interface
 uses
   stringx, tickcount, systemx,typex, Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ComCtrls, FrameTotalDebug, simplequeue, commandprocessor, anoncommand, globalmultiqueue, better_collections, linked_list,
-  Vcl.Imaging.jpeg, fastbitmap, easyimage;
+  Vcl.Imaging.jpeg, fastbitmap, easyimage, debug, pngimage;
 
 const
   MIN_PRIME = 1000000000;
@@ -142,12 +142,18 @@ begin
   //make a fast bitmap from the image component
   fbm := TFastBitmap.create;
 //  fbm.FromPNG(image1.picture.bit);
-  bitmap := jpegToBitmap(image1.picture.graphic as TJpegImage, true);
-  try
-    fbm.FromBitmap(bitmap);
-  finally
-    bitmap.free;
+  Debug.Log(image1.picture.graphic.ClassName);
+  if image1.picture.graphic is TJPEGImage then begin
+    bitmap := jpegToBitmap(image1.picture.graphic as TJpegImage, true);
+    try
+      fbm.FromBitmap(bitmap);
+    finally
+      bitmap.free;
+    end;
+  end else begin
+    fbm.FromPNG(image1.picture.graphic as TPNGImage);
   end;
+
 
   //make an output fast bitmap
   outfbm := TFastBitmap.create;
