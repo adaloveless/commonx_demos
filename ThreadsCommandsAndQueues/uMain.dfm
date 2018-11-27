@@ -2,8 +2,8 @@ object Form1: TForm1
   Left = 0
   Top = 0
   Caption = 'Form1'
-  ClientHeight = 557
-  ClientWidth = 1058
+  ClientHeight = 639
+  ClientWidth = 1065
   Color = clBtnFace
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
@@ -19,7 +19,7 @@ object Form1: TForm1
     Left = 665
     Top = 0
     Width = 8
-    Height = 557
+    Height = 639
     ExplicitLeft = 289
     ExplicitHeight = 582
   end
@@ -27,13 +27,18 @@ object Form1: TForm1
     Left = 0
     Top = 0
     Width = 665
-    Height = 557
+    Height = 639
     ActivePage = TabSheet2
     Align = alLeft
     TabOrder = 0
+    ExplicitHeight = 557
     object TabSheet1: TTabSheet
       Caption = 'Queues'
       OnContextPopup = TabSheet1ContextPopup
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object lblResult: TLabel
         Left = 192
         Top = 24
@@ -63,9 +68,10 @@ object Form1: TForm1
     object TabSheet2: TTabSheet
       Caption = 'Commands'
       ImageIndex = 1
+      ExplicitHeight = 529
       DesignSize = (
         657
-        529)
+        611)
       object lblResult2: TLabel
         Left = 167
         Top = 0
@@ -86,7 +92,7 @@ object Form1: TForm1
         Left = 4
         Top = 101
         Width = 650
-        Height = 416
+        Height = 498
         Anchors = [akLeft, akTop, akRight, akBottom]
         Picture.Data = {
           0A544A504547496D6167655AB00E00FFD8FFE000104A4649460001020100B400
@@ -30175,6 +30181,7 @@ object Form1: TForm1
           7142320D5C26DFFFD9}
         Proportional = True
         Stretch = True
+        ExplicitHeight = 416
       end
       object btnCommands: TButton
         Left = 0
@@ -30199,10 +30206,12 @@ object Form1: TForm1
   object panFrameHost: TPanel
     Left = 673
     Top = 0
-    Width = 385
-    Height = 557
+    Width = 392
+    Height = 639
     Align = alClient
     TabOrder = 1
+    ExplicitWidth = 385
+    ExplicitHeight = 557
   end
   object tmCheckCommand: TTimer
     Interval = 100
