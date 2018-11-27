@@ -28,22 +28,17 @@ object Form1: TForm1
     Top = 0
     Width = 665
     Height = 639
-    ActivePage = TabSheet2
+    ActivePage = TabSheet1
     Align = alLeft
     TabOrder = 0
-    ExplicitHeight = 557
     object TabSheet1: TTabSheet
       Caption = 'Queues'
       OnContextPopup = TabSheet1ContextPopup
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object lblResult: TLabel
         Left = 192
         Top = 24
         Width = 433
-        Height = 49
+        Height = 113
         AutoSize = False
         Caption = 'Results:'
         Font.Charset = DEFAULT_CHARSET
@@ -68,15 +63,14 @@ object Form1: TForm1
     object TabSheet2: TTabSheet
       Caption = 'Commands'
       ImageIndex = 1
-      ExplicitHeight = 529
       DesignSize = (
         657
         611)
       object lblResult2: TLabel
         Left = 167
         Top = 0
-        Width = 321
-        Height = 49
+        Width = 458
+        Height = 95
         AutoSize = False
         Caption = 'Results:'
         Font.Charset = DEFAULT_CHARSET
@@ -30210,8 +30204,6 @@ object Form1: TForm1
     Height = 639
     Align = alClient
     TabOrder = 1
-    ExplicitWidth = 385
-    ExplicitHeight = 557
   end
   object tmCheckCommand: TTimer
     Interval = 100
