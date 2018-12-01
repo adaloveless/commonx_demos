@@ -5,7 +5,8 @@ uses
   brainwashultra,
   Vcl.Forms,
   uMain in 'uMain.pas' {Form1},
-  FrameTotalDebug in '..\commonx\FrameTotalDebug.pas' {framTotalDebug: TFrame};
+  FrameTotalDebug in '..\commonx\FrameTotalDebug.pas' {framTotalDebug: TFrame},
+  FastBitmap_OpenCL_Extension in '..\commonx\FastBitmap_OpenCL_Extension.pas';
 
 {$R *.res}
 

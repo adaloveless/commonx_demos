@@ -1,6 +1,7 @@
 unit uMain;
 
 interface
+{x$DEFINE TI}//USE TYPE INFERENCE
 
 uses
   stringx, tickcount, systemx,typex, Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
@@ -230,7 +231,8 @@ procedure TForm1.Button1Click(Sender: TObject);
 //and the result of the operation will be a fully merged TFastBitmap.
 //
 
-
+const
+  BLUR_RADIUS = 16;
 var
   src: TFastBitmap;
   dest: TFastBitmap;
@@ -282,6 +284,83 @@ begin
   //but in this particular case, we're going to have our form watch it in a Timer
   //so that we can progressively update the GUI to show the magic happening.
   self.activecmd := dest.IterateExternalSource_begin(src,
+{$DEFINE USE_GPU}
+{$IFNDEF USE_GPU}
+''
+{$ELSE}
+            'float4 uchar4tofloat4(uchar4 c) { float4 res =  {c.x,c.y,c.z,c.w}; return res; };'+CRLF+
+            'uchar4 float4tochar4(float4 v) { uchar4 res = {v.x,v.y,v.z,v.w}; return res; };'+CRLF+
+            'uchar4 getSample(__global uchar4* grid, int stride_in_pixels, int x, int y) '+CRLF+
+            '{'+CRLF+
+            '  return grid[(y*stride_in_pixels)+x];'+CRLF+
+            '}'+CRLF+
+            'void setSample(__global uchar4* grid, int stride_in_pixels, int x, int y, uchar4 color) '+CRLF+
+            '{'+CRLF+
+            '  grid[(y*stride_in_pixels)+x] = color;'+CRLF+
+            '}'+CRLF+
+            '__kernel void main('+CRLF+
+                  '__global uchar4* dst, '+CRLF+//  AddOutput(dest.ptr, dest.sz);
+                  '__global long* dst_width, '+CRLF+
+                  '__global long* dst_height,'+CRLF+
+                  '__global long* dst_stride_in_pixels, '+CRLF+
+                  '__global uchar4* src,'+CRLF+//  AddInput(src.ptr, src.sz);
+                  '__global long* src_width,'+CRLF+
+                  '__global long* src_height,'+CRLF+
+                  '__global long* src_stride_in_pixels'+CRLF+
+
+            ')'+CRLF+
+            '{'+CRLF+
+            ' unsigned int n = get_global_id(0);'+CRLF+
+            ' unsigned int srcx = n % src_stride_in_pixels[0];'+CRLF+
+            ' unsigned int srcy = n / src_stride_in_pixels[0];'+CRLF+
+            ' unsigned int dstx = n % dst_stride_in_pixels[0];'+CRLF+
+            ' unsigned int dsty = n / dst_stride_in_pixels[0];'+CRLF+
+            ' uchar4 color = src[(srcy*src_stride_in_pixels[0])+srcx];'+CRLF+
+            ' float4 bigcolor = {0,0,0,0};//convert_float4(color); '+CRLF+
+            ' int xx; '+CRLF+
+            ' int yy; '+CRLF+
+            ' int cnt = 0; '+CRLF+
+//            ' __attribute__((opencl_unroll_hint(1))) '+CRLF+
+            ' for (yy=0-'+inttostr(BLUR_RADIUS)+';yy<='+inttostr(BLUR_RADIUS)+';yy++) '+CRLF+
+            ' { '+CRLF+
+            '   int yyy = yy+dsty; '+CRLF+
+            '   if ((yyy>=0) && (yyy<dst_height[0])) '+CRLF+
+            '   { '+CRLF+
+//            '      __attribute__((opencl_unroll_hint(1))) '+CRLF+
+            '     for (xx=0-'+inttostr(BLUR_RADIUS)+';xx<='+inttostr(BLUR_RADIUS)+';xx++) '+CRLF+
+            '     { '+CRLF+
+            '       int xxx = xx+dstx; '+CRLF+
+            '       if ((xxx>=0) && (xxx<src_width[0])) '+CRLF+
+            '       { '+CRLF+
+            '         uchar4 c = src[(yyy*src_stride_in_pixels[0])+xxx]; '+CRLF+
+//            '         bigcolor += convert_float4(c); '+CRLF+
+            '         bigcolor.x += c.x; '+CRLF+
+            '         bigcolor.y += c.y; '+CRLF+
+            '         bigcolor.z += c.z; '+CRLF+
+            '         bigcolor.w += c.w; '+CRLF+
+            '         cnt++; '+CRLF+
+            '       } '+CRLF+
+            '     } '+CRLF+
+            '   } '+CRLF+
+            ' } '+CRLF+
+//            ' bigcolor /= cnt; '+CRLF+
+            ' bigcolor.x /= cnt; '+CRLF+
+            ' bigcolor.y /= cnt; '+CRLF+
+            ' bigcolor.z /= cnt; '+CRLF+
+            ' bigcolor.w /= cnt; '+CRLF+
+
+            ' if (bigcolor.x > 255.0) bigcolor.x = 255.0;'+CRLF+
+            ' if (bigcolor.y > 255.0) bigcolor.y = 255.0;'+CRLF+
+            ' if (bigcolor.z > 255.0) bigcolor.z = 255.0;'+CRLF+
+            ' if (bigcolor.w > 255.0) bigcolor.w = 255.0;'+CRLF+
+            ' bigcolor.w = 0.0; '+CRLF+
+//            ' bigcolor.y = 255.0; '+CRLF+
+
+            ' color = convert_uchar4(bigcolor); '+CRLF+
+            ' dst[(dsty*dst_stride_in_pixels[0])+dstx] = color;//getBlurredSample(to_local(src), src_stride[0], dstx, dsty, 16, 16);'+CRLF+
+            '}'
+{$ENDIF}
+            ,
             //---------------------------------------------
             //This is the real work that our filter does!!
             procedure (source: TFastBitmap; dest: TFastBitmap; region: TRect; prog: PProgress)
@@ -300,7 +379,7 @@ begin
                 //for each pixel in the region
                 for x := region.Left to region.right do begin
                   //output a blurred pixel, average from surrounding pixels
-                  dest.Canvas.Pixels[x,y] := source.Canvas.getaveragepixel(x,y,16,16);
+                  dest.Canvas.Pixels[x,y] := source.Canvas.getaveragepixel(x,y,BLUR_RADIUS,BLUR_RADIUS);
                 end;
               end;
             end
@@ -315,6 +394,7 @@ end;
 
 procedure TForm1.btnCommandsClick(Sender: TObject);
 var
+  cmd: TCommand_IsPrime;
   ac: TAnonymousCommand<ni>;
   res: ni;
   tmStart,tmEnd: ticker;
@@ -358,7 +438,9 @@ begin
           function: ni
           var
             x: ni;
+            {$IFNDEF TI}
             cmd: Tcommand_IsPrime;
+            {$ENDIF}
           begin
             res := 0;
 
@@ -375,7 +457,7 @@ begin
               //create a command to test the prime
               cmd := TCommand_IsPrime.create;//SEE CODE FOR TCommand_IsPrime!!!!!!!! at the top of this file
               cmd.in_n := x;
-              cmd.FireForget := true;//fire-froget means that it is auto-destroyed and we can't watch it
+              cmd.FireForget := true;//fire-forget means that it is auto-destroyed and we can't watch it
               cmd.start; //start the command (default command processor), you can pass a param to use an alternate command processor that you create.
               cmd.OnFinish_anon :=
               (
@@ -491,8 +573,8 @@ begin
       activecmd.waitfor;
 
       if activecmd is Tcmd_FastBitmapIterate then begin
-//        Tcmd_FastBitmapIterate(activecmd).dest.AssignToPicture(image1.picture);
         lblResult2.Caption := 'Completed in '+floatprecision(gettimesince(tmstart)/1000,3)+' seconds.';
+        Tcmd_FastBitmapIterate(activecmd).dest.AssignToPicture(image1.picture);
       end;
 
       activecmd.free;
