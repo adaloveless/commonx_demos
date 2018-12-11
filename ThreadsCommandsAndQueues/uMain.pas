@@ -288,16 +288,6 @@ begin
 {$IFNDEF USE_GPU}
 ''
 {$ELSE}
-            'float4 uchar4tofloat4(uchar4 c) { float4 res =  {c.x,c.y,c.z,c.w}; return res; };'+CRLF+
-            'uchar4 float4tochar4(float4 v) { uchar4 res = {v.x,v.y,v.z,v.w}; return res; };'+CRLF+
-            'uchar4 getSample(__global uchar4* grid, int stride_in_pixels, int x, int y) '+CRLF+
-            '{'+CRLF+
-            '  return grid[(y*stride_in_pixels)+x];'+CRLF+
-            '}'+CRLF+
-            'void setSample(__global uchar4* grid, int stride_in_pixels, int x, int y, uchar4 color) '+CRLF+
-            '{'+CRLF+
-            '  grid[(y*stride_in_pixels)+x] = color;'+CRLF+
-            '}'+CRLF+
             '__kernel void main('+CRLF+
                   '__global uchar4* dst, '+CRLF+//  AddOutput(dest.ptr, dest.sz);
                   '__global long* dst_width, '+CRLF+
