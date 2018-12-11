@@ -30186,6 +30186,7 @@ object Form1: TForm1
         Top = 567
         Width = 465
         Height = 41
+        Anchors = [akLeft, akBottom]
         AutoSize = False
         Caption = 
           'Note: If OPENCL throws exceptions, CPU fallback is engaged autom' +
@@ -30199,6 +30200,7 @@ object Form1: TForm1
         Top = 551
         Width = 139
         Height = 71
+        Anchors = [akLeft, akBottom]
         AutoSize = False
         Caption = 
           'My times: 4-core i7 - 26 seconds --- 32C/64T threadripper 5.6 se' +
