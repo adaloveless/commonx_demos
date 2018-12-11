@@ -2,7 +2,7 @@ object Form1: TForm1
   Left = 0
   Top = 0
   Caption = 'Form1'
-  ClientHeight = 639
+  ClientHeight = 653
   ClientWidth = 1065
   Color = clBtnFace
   DoubleBuffered = True
@@ -19,7 +19,7 @@ object Form1: TForm1
     Left = 665
     Top = 0
     Width = 8
-    Height = 639
+    Height = 653
     ExplicitLeft = 289
     ExplicitHeight = 582
   end
@@ -27,13 +27,15 @@ object Form1: TForm1
     Left = 0
     Top = 0
     Width = 665
-    Height = 639
+    Height = 653
     ActivePage = TabSheet2
     Align = alLeft
     TabOrder = 0
+    ExplicitHeight = 639
     object TabSheet1: TTabSheet
       Caption = 'Queues'
       OnContextPopup = TabSheet1ContextPopup
+      ExplicitHeight = 611
       object lblResult: TLabel
         Left = 192
         Top = 24
@@ -63,14 +65,17 @@ object Form1: TForm1
     object TabSheet2: TTabSheet
       Caption = 'Commands'
       ImageIndex = 1
+      ExplicitLeft = 2
+      ExplicitTop = 28
+      ExplicitHeight = 611
       DesignSize = (
         657
-        611)
+        625)
       object lblResult2: TLabel
-        Left = 167
+        Left = 170
         Top = 0
-        Width = 458
-        Height = 95
+        Width = 455
+        Height = 56
         AutoSize = False
         Caption = 'Results:'
         Font.Charset = DEFAULT_CHARSET
@@ -86,7 +91,7 @@ object Form1: TForm1
         Left = 4
         Top = 101
         Width = 650
-        Height = 498
+        Height = 444
         Anchors = [akLeft, akTop, akRight, akBottom]
         Picture.Data = {
           0A544A504547496D6167655AB00E00FFD8FFE000104A4649460001020100B400
@@ -30175,7 +30180,30 @@ object Form1: TForm1
           7142320D5C26DFFFD9}
         Proportional = True
         Stretch = True
-        ExplicitHeight = 416
+      end
+      object Label1: TLabel
+        Left = 3
+        Top = 567
+        Width = 465
+        Height = 41
+        AutoSize = False
+        Caption = 
+          'Note: If OPENCL throws exceptions, CPU fallback is engaged autom' +
+          'atically.  Also Note: Thread Creation time is dramatically slowe' +
+          'r if the Delphi debugger is attached.  Try running without debug' +
+          'ging for best performance. '
+        WordWrap = True
+      end
+      object Label2: TLabel
+        Left = 496
+        Top = 551
+        Width = 139
+        Height = 71
+        AutoSize = False
+        Caption = 
+          'My times: 4-core i7 - 26 seconds --- 32C/64T threadripper 5.6 se' +
+          'conds -- OpenCL RTX 2080Ti 0.5 Seconds'
+        WordWrap = True
       end
       object btnCommands: TButton
         Left = 0
@@ -30195,15 +30223,24 @@ object Form1: TForm1
         TabOrder = 1
         OnClick = Button1Click
       end
+      object cbTryOpenCL: TCheckBox
+        Left = 177
+        Top = 62
+        Width = 97
+        Height = 17
+        Caption = '&Try openCL'
+        TabOrder = 2
+      end
     end
   end
   object panFrameHost: TPanel
     Left = 673
     Top = 0
     Width = 392
-    Height = 639
+    Height = 653
     Align = alClient
     TabOrder = 1
+    ExplicitHeight = 639
   end
   object tmCheckCommand: TTimer
     Interval = 100

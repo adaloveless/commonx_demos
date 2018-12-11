@@ -101,6 +101,9 @@ type
     btnCommands: TButton;
     Image1: TImage;
     Button1: TButton;
+    cbTryOpenCL: TCheckBox;
+    Label1: TLabel;
+    Label2: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure btnQueuesClick(Sender: TObject);
     procedure lblResultClick(Sender: TObject);
@@ -238,6 +241,7 @@ var
   dest: TFastBitmap;
   jpg: TJPEGImage;
   bitmap: TBitmap;
+  opencl_code: string;
 begin
 
   tmStart := getTicker;
@@ -277,17 +281,9 @@ begin
   //new, blank bitmap
   dest.New;
 
-  //-------------------------------------------------------
-  //This is the key function call.
-  //dest.IterateExternalSource_begin returns a running TCommand descendent
-  //if you want, you can just call TCommand.WaitFor to wait for it to finish
-  //but in this particular case, we're going to have our form watch it in a Timer
-  //so that we can progressively update the GUI to show the magic happening.
-  self.activecmd := dest.IterateExternalSource_begin(src,
-{$DEFINE USE_GPU}
-{$IFNDEF USE_GPU}
-''
-{$ELSE}
+  if cbTryopenCL.checked then begin
+    //including openCL code is optional, but very powerful many workloads
+    opencl_code :=
             '__kernel void main('+CRLF+
                   '__global uchar4* dst, '+CRLF+//  AddOutput(dest.ptr, dest.sz);
                   '__global long* dst_width, '+CRLF+
@@ -310,51 +306,52 @@ begin
             ' int xx; '+CRLF+
             ' int yy; '+CRLF+
             ' int cnt = 0; '+CRLF+
-//            ' __attribute__((opencl_unroll_hint(1))) '+CRLF+
             ' for (yy=0-'+inttostr(BLUR_RADIUS)+';yy<='+inttostr(BLUR_RADIUS)+';yy++) '+CRLF+
             ' { '+CRLF+
             '   int yyy = yy+dsty; '+CRLF+
             '   if ((yyy>=0) && (yyy<dst_height[0])) '+CRLF+
             '   { '+CRLF+
-//            '      __attribute__((opencl_unroll_hint(1))) '+CRLF+
             '     for (xx=0-'+inttostr(BLUR_RADIUS)+';xx<='+inttostr(BLUR_RADIUS)+';xx++) '+CRLF+
             '     { '+CRLF+
             '       int xxx = xx+dstx; '+CRLF+
             '       if ((xxx>=0) && (xxx<src_width[0])) '+CRLF+
             '       { '+CRLF+
             '         uchar4 c = src[(yyy*src_stride_in_pixels[0])+xxx]; '+CRLF+
-//            '         bigcolor += convert_float4(c); '+CRLF+
-            '         bigcolor.x += c.x; '+CRLF+
-            '         bigcolor.y += c.y; '+CRLF+
-            '         bigcolor.z += c.z; '+CRLF+
-            '         bigcolor.w += c.w; '+CRLF+
+            '         float4 bc = convert_float4(c); '+CRLF+
+            '         bigcolor += bc; '+CRLF+
             '         cnt++; '+CRLF+
             '       } '+CRLF+
             '     } '+CRLF+
             '   } '+CRLF+
             ' } '+CRLF+
-//            ' bigcolor /= cnt; '+CRLF+
-            ' bigcolor.x /= cnt; '+CRLF+
-            ' bigcolor.y /= cnt; '+CRLF+
-            ' bigcolor.z /= cnt; '+CRLF+
-            ' bigcolor.w /= cnt; '+CRLF+
-
+            ' bigcolor /= cnt; '+CRLF+
             ' if (bigcolor.x > 255.0) bigcolor.x = 255.0;'+CRLF+
             ' if (bigcolor.y > 255.0) bigcolor.y = 255.0;'+CRLF+
             ' if (bigcolor.z > 255.0) bigcolor.z = 255.0;'+CRLF+
             ' if (bigcolor.w > 255.0) bigcolor.w = 255.0;'+CRLF+
             ' bigcolor.w = 0.0; '+CRLF+
-//            ' bigcolor.y = 255.0; '+CRLF+
 
             ' color = convert_uchar4(bigcolor); '+CRLF+
             ' dst[(dsty*dst_stride_in_pixels[0])+dstx] = color;//getBlurredSample(to_local(src), src_stride[0], dstx, dsty, 16, 16);'+CRLF+
-            '}'
-{$ENDIF}
+            '}';
+  end else begin
+    opencl_code := '';
+  end;
+
+  //-------------------------------------------------------
+  //This is the key function call.
+  //dest.IterateExternalSource_begin returns a running TCommand descendent
+  //if you want, you can just call TCommand.WaitFor to wait for it to finish
+  //but in this particular case, we're going to have our form watch it in a Timer
+  //so that we can progressively update the GUI to show the magic happening.
+  self.activecmd := dest.IterateExternalSource_begin(src,
+            opencl_code //OPTIONAL openCL variant
             ,
             //---------------------------------------------
-            //This is the real work that our filter does!!
+            //This is the real work that our filter does in the CPU!!
+            //THIS ONLY is used if the OpenCL version fails or is blank ''
             procedure (source: TFastBitmap; dest: TFastBitmap; region: TRect; prog: PProgress)
-                      //^read from this    //^write to this    //don't write outside this
+                      //^read from this    //^write to this    //^don't write outside this
             var
               x,y: ni;
             begin
