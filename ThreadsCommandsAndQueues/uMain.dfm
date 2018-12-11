@@ -30200,7 +30200,7 @@ object Form1: TForm1
         Top = 551
         Width = 139
         Height = 71
-        Anchors = [akLeft, akBottom]
+        Anchors = [akLeft, akRight, akBottom]
         AutoSize = False
         Caption = 
           'My times: 4-core i7 - 26 seconds --- 32C/64T threadripper 5.6 se' +
