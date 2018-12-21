@@ -396,9 +396,9 @@ begin
   //TCommand is more expensive than TqueueItem, but is more flexible in the way
   //that resources are allocated.  Resources are allocated on-demand based
   //on the reported "expense" of the commands currently active.
-  //By default, TCommand is set to CPUExpense := 1.0, however, this is
-  //not the only resource control.  Setting CPUExpense to 0.5 removes this
-  //constraint, and will allow TCommandProcessor to run 2 commands per VirtualCore.
+  //By default, TCommand is set to CPUExpense := 1.0, meaning that 1 command will run on one Virtual Core
+  //however, this is not the only resource control.  Setting CPUExpense to 0.5
+  //will allow TCommandProcessor to run 2 commands per VirtualCore.
   //MemoryExpense := 1.0 tells the command processor that this command uses
   //   all available memory and should be run exclusively
   //There's also DiskExpense and NetworkExpense (similar)
