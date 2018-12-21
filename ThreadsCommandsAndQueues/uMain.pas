@@ -282,7 +282,7 @@ begin
   dest.New;
 
   if cbTryopenCL.checked then begin
-    //including openCL code is optional, but very powerful many workloads
+    //including openCL code is optional, but very powerful for many workloads
     opencl_code :=
             '__kernel void main('+CRLF+
                   '__global uchar4* dst, '+CRLF+//  AddOutput(dest.ptr, dest.sz);
