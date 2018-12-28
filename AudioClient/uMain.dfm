@@ -44,7 +44,7 @@ object Form1: TForm1
     Top = 8
     Width = 345
     Height = 65
-    Caption = 'RadioGroup1'
+    Caption = 'API'
     Items.Strings = (
       'Windows Multimedia (no special requirements, higher latency)'
       'Port Audio (abstract, low latency, requires PortAudio dlls)')

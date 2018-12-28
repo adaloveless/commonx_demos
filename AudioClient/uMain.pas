@@ -20,10 +20,10 @@ type
     tmLookForAudio: TTimer;
     Button1: TButton;
     RadioGroup1: TRadioGroup;
-    procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure RadioGroup1Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -58,10 +58,12 @@ end;
 procedure TForm1.CleanupAudio;
 begin
   CleanupOscillators;
-  sd.stop;
-  sd.WaitForFinish;
-  TPM.NoNeedThread(sd);
-  sd := nil;
+  if sd <> nil then begin
+    sd.stop;
+    sd.WaitForFinish;
+    TPM.NoNeedThread(sd);
+    sd := nil;
+  end;
 
 end;
 
@@ -78,16 +80,14 @@ end;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
-  sd := TPM.Needthread<TSoundDevice_MM>(self);
-  sd.Start;
+  SwitchAudioMode(-1);//initialize to -1 (no audio)
+  RadioGroup1.ItemIndex := 0;
 
 end;
 
 procedure TForm1.FormDestroy(Sender: TObject);
 begin
-  sd.stop;
-  sd.WaitFor;
-  TPM.NoNeedthread(sd);
+  SwitchAudioMode(-1);//Cleans up stuff
 end;
 
 procedure TForm1.RadioGroup1Click(Sender: TObject);
