@@ -2,6 +2,7 @@ program AudioClient;
 
 uses
   Vcl.Forms,
+  idglobal,
   uMain in 'uMain.pas' {Form1};
 
 {$R *.res}
