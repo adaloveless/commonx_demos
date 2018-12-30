@@ -103,10 +103,7 @@ begin
   CleanupAudio;
   audiomode := mode;
   case mode of
-    0: begin
-        sd := TPM.Needthread<TSoundDevice_MM>(self);
-        gwatchthread := sd.ThreadID;
-    end;
+    0: sd := TPM.Needthread<TSoundDevice_MM>(self);
     1: sd := TPM.Needthread<TsoundDevice_PortAudio>(self);
   end;
   if sd <> nil then

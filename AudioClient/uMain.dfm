@@ -47,7 +47,9 @@ object Form1: TForm1
     Caption = 'API'
     Items.Strings = (
       'Windows Multimedia (no special requirements, higher latency)'
-      'Port Audio (abstract, low latency, requires PortAudio dlls)')
+      
+        'Port Audio (abstraction layer, low latency, requires PortAudio d' +
+        'lls)')
     TabOrder = 2
     OnClick = RadioGroup1Click
   end
