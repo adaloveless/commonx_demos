@@ -61,7 +61,7 @@ begin
   if sd <> nil then begin
     sd.stop;
     sd.WaitForFinish;
-    TPM.NoNeedThread(sd);
+    sd.free;
     sd := nil;
   end;
 
@@ -103,7 +103,10 @@ begin
   CleanupAudio;
   audiomode := mode;
   case mode of
-    0: sd := TPM.Needthread<TSoundDevice_MM>(self);
+    0: begin
+        sd := TPM.Needthread<TSoundDevice_MM>(self);
+        gwatchthread := sd.ThreadID;
+    end;
     1: sd := TPM.Needthread<TsoundDevice_PortAudio>(self);
   end;
   if sd <> nil then
