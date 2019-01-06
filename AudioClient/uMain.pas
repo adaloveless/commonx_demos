@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, herro, SoundTools_EasyWindows, sounddevice_mm, soundtools,
-  Vcl.ExtCtrls, managedthread, soundinterfaces, math, soundsample, typex, sounddevice_portaudio;
+  Vcl.ExtCtrls, managedthread, soundinterfaces, math, soundsample, typex, sounddevice_portaudio, guihelpers, stringx;
 
 type
   TSimpleSampleOscillator = class(TOscillatorObject)
@@ -20,10 +20,13 @@ type
     tmLookForAudio: TTimer;
     Button1: TButton;
     RadioGroup1: TRadioGroup;
+    lbDevices: TListBox;
+    lblStatus: TLabel;
     procedure FormDestroy(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure RadioGroup1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure lbDevicesClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -34,6 +37,7 @@ type
     procedure SwitchAudioMode(mode: ni);
     procedure CleanupAudio;
     procedure CleanupOscillators;
+    procedure UpdateDeviceStatus;
   end;
 
 var
@@ -45,6 +49,10 @@ implementation
 
 procedure TForm1.Button1Click(Sender: TObject);
 begin
+  if sd = nil then
+    exit;
+  if not sd.StartCalled then
+    sd.Start;
   if sine = nil then begin
     sine := TSimpleSampleOscillator.Create;
     sd.AddOscillator(sine);
@@ -57,6 +65,11 @@ end;
 
 procedure TForm1.CleanupAudio;
 begin
+  if sd <> nil then begin
+    if not sd.StartCalled then
+      sd.start;
+  end;
+
   CleanupOscillators;
   if sd <> nil then begin
     sd.stop;
@@ -90,9 +103,36 @@ begin
   SwitchAudioMode(-1);//Cleans up stuff
 end;
 
+procedure TForm1.lbDevicesClick(Sender: TObject);
+begin
+  if sd = nil then
+    exit;
+//  SwitchAudioMode(-1);
+//  SwitchAudioMode(radiogroup1.ItemIndex);
+
+
+  var lb := sender as TListBox;
+  if lb.ItemIndex < 0 then
+    exit;
+
+  var sDevice := lb.Items[lb.itemindex];
+  sd.DeviceName := sDevice;
+  UpdateDeviceStatus;
+end;
+
 procedure TForm1.RadioGroup1Click(Sender: TObject);
 begin
   SwitchAudioMode(RadioGroup1.ItemIndex);
+  if RadioGroup1.ItemIndex >= 0 then begin
+    sd.RefreshDevices;
+    var h := sd.DeviceList;
+
+    StringListToListBox(lbDevices, h.o);
+    lbDevices.ItemIndex := 0;
+  end else begin
+    lbDevices.Clear;
+  end;
+  UpdateDeviceStatus;
 end;
 
 procedure TForm1.SwitchAudioMode(mode: ni);
@@ -106,8 +146,22 @@ begin
     0: sd := TPM.Needthread<TSoundDevice_MM>(self);
     1: sd := TPM.Needthread<TsoundDevice_PortAudio>(self);
   end;
-  if sd <> nil then
-    sd.start;
+
+
+
+end;
+
+procedure TForm1.UpdateDeviceStatus;
+var
+  s: string;
+begin
+  if sd = nil then
+    s := 'nil'
+  else
+    s := sd.ClassName+' '+sd.devicename;
+
+  lblStatus.Caption := s;
+
 
 end;
 
