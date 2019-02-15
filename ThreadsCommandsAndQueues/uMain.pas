@@ -120,7 +120,7 @@ type
     { Public declarations }
     procedure RefreshProcInfo;
     procedure UpdateState;
-    procedure TileNotify(src, dest: TFastBitmap; region: TRect; state: TTileState);
+    procedure TileNotify(src, dest: TFastBitmap; region: TPixelRect; state: TTileState);
   end;
 
 
@@ -350,7 +350,7 @@ begin
             //---------------------------------------------
             //This is the real work that our filter does in the CPU!!
             //THIS ONLY is used if the OpenCL version fails or is blank ''
-            procedure (source: TFastBitmap; dest: TFastBitmap; region: TRect; prog: PProgress)
+            procedure (source: TFastBitmap; dest: TFastBitmap; region: TPixelRect; prog: PProgress)
                       //^read from this    //^write to this    //^don't write outside this
             var
               x,y: ni;
@@ -522,7 +522,7 @@ begin
   btnQueues.enabled := activecmd = nil;
 end;
 
-procedure TForm1.TileNotify(src, dest: TFastBitmap; region: TRect;
+procedure TForm1.TileNotify(src, dest: TFastBitmap; region: TPixelRect;
   state: TTileState);
 var
   tile: TFastBitmap;
@@ -541,9 +541,9 @@ begin
   else if state = tsStarted then begin
     image1.Picture.bitmap.canvas.Pen.Color := clWhite;
     image1.Picture.bitmap.canvas.Pen.Mode := TPenMode.pmXor;
-    region.Right := region.right + 1;
-    region.Bottom := region.bottom + 1;
-    image1.picture.bitmap.canvas.Rectangle(region);
+    region.Right := region.right;
+    region.Bottom := region.bottom;
+    image1.picture.bitmap.canvas.Rectangle(region.ToRect);
   end;
 
 end;
